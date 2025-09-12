@@ -17,10 +17,10 @@ export async function POST(req: NextRequest) {
     
     const intent = await classifyIntent(query)
     
-    if (intent === '生成结构卡') {
-    const result = await callG
-    return NextResponse.json({ intent, ...result })
-    }
+    // if (intent === '生成结构卡') {
+    // const result = await callG
+    // return NextResponse.json({ intent, ...result })
+    // }
     
     
     if (intent === '查询结构卡') {

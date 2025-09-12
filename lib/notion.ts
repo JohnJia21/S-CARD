@@ -1,6 +1,8 @@
 console.log('🧨🧨【notion.ts 被加载了】🧨🧨');
 
 import { Client } from '@notionhq/client'
+import { isFullDatabase } from "@notionhq/client";
+
 
 // lib/notion.ts
 export const notion = new Client({
@@ -69,8 +71,17 @@ export async function testConnection() {
       database_id: databaseId
     });
 
-    console.log('✅ Notion 连接成功，数据库标题：', database.title[0]?.plain_text || '未命名数据库');
-    return database.title[0]?.plain_text || '连接成功';
+    if (isFullDatabase(database)) {
+      const title = database.title[0]?.plain_text || "未命名数据库";
+      console.log("✅ Notion 连接成功，数据库标题：", title);
+      return title;
+    } else {
+      console.warn("⚠️ 获取到的是部分数据库对象（PartialDatabaseObjectResponse）");
+      return "连接成功（未完整返回数据库信息）";
+    }
+
+    // console.log('✅ Notion 连接成功，数据库标题：', database.title[0]?.plain_text || '未命名数据库');
+    // return database.title[0]?.plain_text || '连接成功';
   } catch (error) {
     console.error('❌ Notion 连接失败：', error);
     throw error;
