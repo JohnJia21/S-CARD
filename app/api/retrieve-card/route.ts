@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
 
     // 步骤1：用GPT解析用户意图 → 得到结构卡检索关键词或主题 
     const systemPrompt = '你是一个结构卡检索助手。请根据用户输入，提炼出最合适的结构卡关键词或主题，用于在结构卡数据库中进行匹配检索。只输出关键词或主题，不要额外说明。'; 
-    const keyword = await getChatCompletion(systemPrompt,userInput)
+    const keyword = userInput;
+    //const keyword = await getChatCompletion(systemPrompt,userInput)
+
     
     console.log('Searching for cards with keyword:', keyword)
 
