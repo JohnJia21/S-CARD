@@ -275,7 +275,9 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
               <p className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
                 📖 <span>正文</span>
               </p>
-              <p className="text-sm whitespace-pre-line leading-relaxed">{card.正文}</p>
+              <div className="max-h-[60vh] overflow-y-auto text-sm whitespace-pre-line break-words">
+                {card.正文}
+              </div>              
             </div>
           )}
 
