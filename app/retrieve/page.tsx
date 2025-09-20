@@ -113,7 +113,7 @@ export default function RetrieveSmartPage() {
 
         {/* 🔽 新增：主题/产品标签（多选） */}
         <div className="flex-1">
-          <label className="block text-sm mb-1">主题/产品标签（多选）</label>
+          <label className="block text-sm mb-1">主题标签（多选）</label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
