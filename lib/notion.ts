@@ -13,17 +13,17 @@ const databaseId = process.env.NOTION_DATABASE_ID!
 
 //生成结构卡
 export async function saveToNotion(title: string, content: string, type: string, original: string) {
-  console.log('✅ 参数：','original=' + original+'type=' + type+'title=' + title);
+  // console.log('✅ 参数：','original=' + original+'type=' + type+'title=' + title);
   await notion.pages.create({
     parent: { database_id: databaseId },
     properties: {
-      名称: {
+      标题: {
         title: [{ text: { content: title } }]
       },
-      类型: {
-        select: { name: type }  // ⚠️ Notion中对应字段必须是"select"类型
+      卡片类型: {
+        select: { name: type }  // ⚠️ Notion中对应字段必须是"select"卡片类型
       },
-      原文: {
+      一句话主张: {
         rich_text: [{ text: { content: original } }]
       }
     },
@@ -41,25 +41,77 @@ export async function saveToNotion(title: string, content: string, type: string,
 
 //查询结构卡：补充函数：模糊匹配结构卡
 // 使用 v5.0.0 标准 API 方法
-export async function getRelevantCardsFromNotion(keyword: string): Promise<any[]> {
-  try {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter: {
-        property: '名称',
-        rich_text: {
-          contains: keyword,
-        },
-      },
+// export async function getRelevantCardsFromNotion(keyword: string): Promise<any[]> {
+//   try {
+//     const response = await notion.databases.query({
+//       database_id: databaseId,
+//       filter: {
+//         property: '标题',
+//         rich_text: {
+//           contains: keyword,
+//         },
+//       },
+//     });
+
+//     return response.results;
+//   } catch (error) {
+//     console.error('❌ 查询结构卡失败：', error);
+//     return [];
+//   }
+// }
+
+export async function getRelevantCardsFromNotion(query: string, filters?: { domain?: string | null, topics?: string[] }) {
+  const conditions: any[] = [];
+
+  // 标题模糊
+  if (query) {
+    conditions.push({
+      property: "标题",
+      title: { contains: query }
     });
-
-    return response.results;
-  } catch (error) {
-    console.error('❌ 查询结构卡失败：', error);
-    return [];
   }
-}
 
+  // 领域维度（单选）
+  if (filters?.domain) {
+    conditions.push({
+      property: "领域维度",
+      select: { equals: filters.domain }
+    });
+  }
+
+  // 主题/产品标签（多选）
+  if (filters?.topics && filters.topics.length > 0) {
+    filters.topics.forEach(topic => {
+      conditions.push({
+        property: "主题/产品标签",
+        multi_select: { contains: topic }
+      });
+    });
+  }
+
+  // console.log("✅查询条件:", conditions);
+
+  const resp = await notion.databases.query({
+    database_id: databaseId,
+    filter: { and: conditions },
+    // sorts: [
+    //   {
+    //     property: "更新时间", // 如果有更新时间字段
+    //     direction: "descending"
+    //   }
+    // ]
+  });
+
+  // console.log("✅ Notion 连接成功, 返回条数:", resp.results.length);
+  // console.log("返回的第一条记录:", JSON.stringify(resp.results[0], null, 2));
+  // resp.results.forEach((page: any, idx: number) => {
+  //   const title = page.properties["标题"]?.title?.[0]?.plain_text ?? "(无标题)";
+  //   console.log(`第 ${idx + 1} 条: ${title}`);
+  // });
+  
+
+  return resp.results;
+}
 
 
 

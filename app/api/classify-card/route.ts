@@ -7,7 +7,6 @@ const databaseId = process.env.NOTION_DATABASE_ID!
 export async function POST(req: NextRequest) {
     const body = await req.json()
     const query = body.query ?? ''
-    console.log('Searching for cards with query:', query)
 
     
     if (!query) {
@@ -28,10 +27,10 @@ export async function POST(req: NextRequest) {
     const cards = pages.map((page: any) => {
     const props = page.properties
     return {
-    名称: props.名称?.title?.[0]?.text?.content ?? '',
-    类型: props.类型?.select?.name ?? '',
-    原文: props.原文?.rich_text?.[0]?.text?.content ?? '',
-    内容: props.内容?.rich_text?.[0]?.text?.content ?? ''
+    标题: props.标题?.title?.[0]?.text?.content ?? '',
+    卡片类型: props.卡片类型?.select?.name ?? '',
+    一句话主张: props.一句话主张?.rich_text?.[0]?.text?.content ?? '',
+    原文摘录: props.原文摘录?.rich_text?.[0]?.text?.content ?? ''
     }
     })
     return NextResponse.json({ intent, cards })

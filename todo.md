@@ -33,12 +33,12 @@
 ├── package.json              // 项目依赖声明
 └── README.md                 // 项目说明
 
-| 文件                               | 贴入内容                                     |
+| 文件                               | 贴入原文摘录                                     |
 | -------------------------------- | ---------------------------------------- |
 | `app/generate/page.tsx`          | 刚刚我们生成的结构卡生成页页面组件                        |
 | `app/api/generate-card/route.ts` | 对应结构卡生成接口，调用 GPT + 写入 Notion             |
 | `lib/openai.ts`                  | GPT 封装函数 `generateStructureCard(prompt)` |
-| `lib/notion.ts`                  | 封装 `saveToNotion()` 写入结构卡内容              |
+| `lib/notion.ts`                  | 封装 `saveToNotion()` 写入结构卡原文摘录              |
 
 ✅ 启动前的准备
 1. 安装依赖

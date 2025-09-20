@@ -51,7 +51,7 @@ export default function GeneratePage() {
       <h1 className="text-2xl font-bold">生成结构卡</h1>
 
       <Select value={cardType} onValueChange={setCardType}>
-        <SelectTrigger className="w-full">选择卡片类型：{cardType}</SelectTrigger>
+        <SelectTrigger className="w-full">选择卡片卡片类型：{cardType}</SelectTrigger>
         <SelectContent>
           <SelectItem value="模型卡">模型卡</SelectItem>
           <SelectItem value="方法卡">方法卡</SelectItem>
@@ -64,7 +64,7 @@ export default function GeneratePage() {
         rows={8}
         value={rawText}
         onChange={e => setRawText(e.target.value)}
-        placeholder="请输入原文内容"
+        placeholder="请输入一句话主张原文摘录"
       />
 
       <Button onClick={handleGenerate} disabled={loading} className="w-full">
