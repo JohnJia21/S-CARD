@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
         领域维度: props["领域维度"]?.multi_select?.map((opt: any) => opt.name) ?? [],
         主题标签: props["主题/产品标签"]?.multi_select?.map((t: any) => t.name) ?? [],
         一句话主张: props.一句话主张?.rich_text?.[0]?.text?.content ?? '',
+        适用场景: props.用来解决什么?.rich_text?.[0]?.text?.content ?? '',
         正文: content, // ✅ 新增字段
       };
     })

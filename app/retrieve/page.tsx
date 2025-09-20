@@ -222,21 +222,62 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
       {/* 展示结果 */}
       {filteredCards.length > 0 ? (
         filteredCards.map((card) => (
-          <Card key={card.id}>
-            <CardContent className="p-4 space-y-2">
-              <p className="font-semibold">📌 {card.标题}</p>
-              <p className="text-sm text-muted-foreground">{card.一句话主张}</p>
+      <Card key={card.id} className="rounded-xl shadow-sm border border-gray-200">
+        <CardContent className="p-5 space-y-3">
+          {/* 标题 */}
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📌</span>
+            <h2 className="font-bold text-lg">{card.标题}</h2>
+          </div>
 
-              <div className="flex flex-wrap gap-2 mt-1">
-                {card.主题标签?.map((tag: string, idx: number) => (
+          {/* 适用场景 */}
+          {card.适用场景 && (
+            <div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                🧩 <span>适用场景</span>
+              </p>
+              <p className="text-sm leading-relaxed">{card.适用场景}</p>
+            </div>
+          )}
+
+          {/* 一句话主张 */}
+          {card.一句话主张 && (
+            <div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                💬 <span>一句话主张</span>
+              </p>
+              <p className="text-sm leading-relaxed">{card.一句话主张}</p>
+            </div>
+          )}
+
+          {/* 标签 */}
+          {card.主题标签?.length > 0 && (
+            <div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
+                🏷️ <span>标签</span>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {card.主题标签.map((tag: string, idx: number) => (
                   <span
                     key={idx}
-                    className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground"
+                    className="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* 正文 */}
+          {card._expanded && (
+            <div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
+                📖 <span>正文</span>
+              </p>
+              <p className="text-sm whitespace-pre-line leading-relaxed">{card.正文}</p>
+            </div>
+          )}
 
               <Button
                 variant="outline"
