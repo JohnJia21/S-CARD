@@ -19,6 +19,8 @@ async function getPageContent(pageId: string): Promise<string> {
     const lines: string[] = [];
 
     for (const block of blocks.results) {
+      if (block.object !== "block" || !("type" in block)) continue;
+
       const text =
         block[block.type]?.rich_text
           ?.map((t: any) => t.plain_text)
