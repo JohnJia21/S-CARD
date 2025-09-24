@@ -3,13 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,7 +20,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { Check, ChevronsUpDown } from "lucide-react"
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover" 
+
+
+ 
 export default function RetrieveSmartPage() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<any>(null);
@@ -102,50 +112,23 @@ export default function RetrieveSmartPage() {
       <div className="flex items-center gap-3">
         <div className="flex-1">
           <label className="block text-sm mb-1">领域维度（单选）</label>
-          <Select
+          <SearchableSelect
+            label=""
+            options={domainOptions}
             value={domain}
-            onValueChange={setDomain}
-            disabled={optionsLoading || domainOptions.length === 0}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={optionsLoading ? "载入中…" : "请选择领域维度"} />
-            </SelectTrigger>
-            <SelectContent>
-              {domainOptions.map((opt) => (
-                <SelectItem key={opt} value={opt}>
-                  {opt}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            onChange={setDomain}
+          />
         </div>
 
         {/* 🔽 新增：主题/产品标签（多选） */}
         <div className="flex-1">
           <label className="block text-sm mb-1">主题标签（多选）</label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-between"
-                disabled={optionsLoading || topicOptions.length === 0}
-              >
-                {topics.length > 0 ? `已选 ${topics.length} 项` : (optionsLoading ? "载入中…" : "请选择标签")}
-                <span className="text-muted-foreground">▼</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-64 max-h-72 overflow-auto">
-              {topicOptions.map((opt) => (
-                <DropdownMenuCheckboxItem
-                  key={opt}
-                  checked={topics.includes(opt)}
-                  onCheckedChange={() => toggleTopic(opt)}
-                >
-                  {opt}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <SearchableMultiSelect
+            label=""
+            options={topicOptions}   // 从后端接口获取的标签数组
+            value={topics}           // useState<string[]>([]) 管理
+            onChange={setTopics}
+          />
           {/* 选择结果可视化 */}
           <div className="mt-2 flex flex-wrap gap-2">
             {topics.map((t) => (
@@ -203,6 +186,7 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
     setActiveTag(activeTag === tag ? null : tag);
   };
 
+  
   // 🔽 当前展示的卡片
   const filteredCards = activeTag
     ? cards.filter((c) => c.主题标签?.includes(activeTag))
@@ -317,3 +301,123 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
   );
 }
 
+//单选下拉框：领域
+export function SearchableSelect({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string
+  options: string[]
+  value: string
+  onChange: (val: string) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+
+  return (
+    <div className="flex flex-col space-y-1">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            className="w-[200px] justify-between"
+          >
+            {value || `请选择${label}`}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder={`搜索${label}...`} />
+            <CommandEmpty>未找到</CommandEmpty>
+            <CommandGroup>
+              {options.map((opt) => (
+                <CommandItem
+                  key={opt}
+                  onSelect={() => {
+                    onChange(opt)
+                    setOpen(false)
+                  }}
+                >
+                  {opt}
+                  {value === opt && (
+                    <Check className="ml-auto h-4 w-4" />
+                  )}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
+
+
+//多选下拉框：标签
+interface SearchableMultiSelectProps {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (value: string[]) => void;
+}
+
+export function SearchableMultiSelect({
+  label,
+  options,
+  value,
+  onChange,
+}: SearchableMultiSelectProps) {
+  const [open, setOpen] = React.useState(false);
+
+  const toggleOption = (option: string) => {
+    if (value.includes(option)) {
+      onChange(value.filter((v) => v !== option));
+    } else {
+      onChange([...value, option]);
+    }
+  };
+
+  return (
+    <div className="flex flex-col space-y-1">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            className="w-[250px] justify-between"
+          >
+            {value.length > 0
+              ? value.join(", ")
+              : `请选择${label}`}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[250px] p-0">
+          <Command>
+            <CommandInput placeholder={`搜索${label}...`} />
+            <CommandEmpty>未找到</CommandEmpty>
+            <CommandGroup>
+              {options.map((opt) => (
+                <CommandItem
+                  key={opt}
+                  onSelect={() => toggleOption(opt)}
+                  className="flex items-center justify-between"
+                >
+                  <span>{opt}</span>
+                  {value.includes(opt) && (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}

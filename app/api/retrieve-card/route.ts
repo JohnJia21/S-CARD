@@ -5,14 +5,64 @@ import { getChatCompletion } from '@/lib/openai';
 const databaseId = process.env.NOTION_DATABASE_ID!
 
   // 工具函数：拼接正文纯文本
-async function getPageContent(pageId: string) {
-    const blocks = await notion.blocks.children.list({ block_id: pageId });
-    return blocks.results
-      .map((block: any) =>
-        block[block.type]?.rich_text?.map((t: any) => t.plain_text).join("") || ""
-      )
-      .join("\n");
+// async function getPageContent(pageId: string) {
+//     const blocks = await notion.blocks.children.list({ block_id: pageId });
+//     return blocks.results
+//       .map((block: any) =>
+//         block[block.type]?.rich_text?.map((t: any) => t.plain_text).join("") || ""
+//       )
+//       .join("\n");
+//   }
+async function getPageContent(pageId: string): Promise<string> {
+  async function getBlocks(blockId: string, depth = 0): Promise<string[]> {
+    const blocks = await notion.blocks.children.list({ block_id: blockId });
+    const lines: string[] = [];
+
+    for (const block of blocks.results) {
+      const text =
+        block[block.type]?.rich_text
+          ?.map((t: any) => t.plain_text)
+          .join("") || "";
+
+      // 根据 block 类型格式化
+      let line = "";
+      switch (block.type) {
+        case "heading_1":
+          line = `# ${text}`;
+          break;
+        case "heading_2":
+          line = `## ${text}`;
+          break;
+        case "heading_3":
+          line = `### ${text}`;
+          break;
+        case "bulleted_list_item":
+          line = `${"  ".repeat(depth)}- ${text}`;
+          break;
+        case "numbered_list_item":
+          line = `${"  ".repeat(depth)}1. ${text}`;
+          break;
+        default:
+          line = `${"  ".repeat(depth)}${text}`;
+      }
+
+      lines.push(line);
+
+      // 如果有子 block → 递归处理
+      if ((block as any).has_children) {
+        const children = await getBlocks(block.id, depth + 1);
+        lines.push(...children);
+      }
+    }
+
+    return lines;
   }
+
+  const lines = await getBlocks(pageId);
+  return lines.join("\n");
+}
+
+
 
 export async function POST(req: NextRequest) {
   try {
