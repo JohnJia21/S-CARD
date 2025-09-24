@@ -18,6 +18,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+
 export default function RetrieveSmartPage() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<any>(null);
@@ -275,20 +284,29 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
               <p className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
                 📖 <span>正文</span>
               </p>
-              <div className="max-h-[60vh] overflow-y-auto text-sm whitespace-pre-line break-words">
+              <div className="max-h-[100vh] overflow-y-auto text-sm whitespace-pre-line break-words">
                 {card.正文}
               </div>              
             </div>
           )}
 
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-2"
-                onClick={() => alert(card.正文)} // 这里可以改成展开/收起正文
-              >
-                查看详情
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="mt-2">
+                    查看详情
+                  </Button>
+                </DialogTrigger>
+
+                <DialogContent className="max-h-[70vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>{card.标题}</DialogTitle>
+                  </DialogHeader>
+
+                  <div className="text-sm whitespace-pre-line break-words">
+                    {card.正文}
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         ))
