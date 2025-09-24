@@ -186,7 +186,7 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
     setActiveTag(activeTag === tag ? null : tag);
   };
 
-  
+
   // 🔽 当前展示的卡片
   const filteredCards = activeTag
     ? cards.filter((c) => c.主题标签?.includes(activeTag))
@@ -302,7 +302,7 @@ function ResultsView({ cards, query }: { cards: any[]; query: string }) {
 }
 
 //单选下拉框：领域
-export function SearchableSelect({
+function SearchableSelect({
   label,
   options,
   value,
@@ -365,7 +365,7 @@ interface SearchableMultiSelectProps {
   onChange: (value: string[]) => void;
 }
 
-export function SearchableMultiSelect({
+function SearchableMultiSelect({
   label,
   options,
   value,
