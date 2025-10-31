@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState,ReactNode } from "react";
 
 /** 痛点与对应“真实抱怨”素材 */
 const PAINS: { key: string; title: string; desc: string; icon: string; lines: string[] }[] = [
@@ -109,7 +109,7 @@ export default function Home() {
   // 进入分屏（悬浮卡片），先展示 3 条
   const enterSplit = (idx: number) => {
     const p = PAINS[idx];
-    const first = Math.min(3, p.lines.length);
+    const first = Math.min(5, p.lines.length);
     const batch: FeedItem[] = p.lines.slice(0, first).map((text) => ({
       id: Date.now() + Math.random(),
       painKey: p.key,
@@ -164,7 +164,7 @@ export default function Home() {
 
       const list = document.querySelector<HTMLElement>("#complaint-list");
       if (list) list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
-    }, 1400);
+    }, 1200);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -182,10 +182,9 @@ export default function Home() {
   }, []);
 
   const renderHighlighted = (text: string) => {
-    // 逐个关键词替换为 <mark>
-    let nodes: (string | JSX.Element)[] = [text];
+    let nodes: ReactNode[] = [text];        // ✅ 用 ReactNode
     highlighters.forEach(({ re, emoji }) => {
-      const next: (string | JSX.Element)[] = [];
+      const next: ReactNode[] = [];         // ✅ 用 ReactNode
       nodes.forEach((chunk, i) => {
         if (typeof chunk !== "string") return next.push(chunk);
         const parts = chunk.split(re);
@@ -249,8 +248,8 @@ export default function Home() {
         <section className="px-4 pb-16">
           <div
             className="
-              max-w-6xl mx-auto grid gap-6
-              grid-cols-1 md:[grid-template-columns:320px_1fr]
+              max-w-7xl mx-auto grid gap-6
+              grid-cols-1 md:[grid-template-columns:360px_1fr] lg:[grid-template-columns:380px_1fr]
             "
             onMouseLeave={backToGrid}
           >
@@ -303,29 +302,32 @@ export default function Home() {
               </div>
 
               {/* 容器更高，行距更紧凑，展示更多内容 */}
-              <div id="complaint-list" className="max-h-[520px] overflow-y-auto pr-2">
+              <div id="complaint-list" className="max-h-[600px] overflow-y-auto pr-1">
                 {feed.length === 0 ? (
                   <div className="text-gray-500 text-sm py-10 text-center">
                     暂无内容。悬浮左侧某个痛点，右侧将先展示 3 条真实抱怨，随后继续追加。
                   </div>
                 ) : (
-                  <ul className="space-y-2">
+                  <ul className="columns-1 md:columns-2 gap-4 [column-fill:balance]">
                     {feed.map((f) => {
-                      const p = PAINS.find((x) => x.key === f.painKey);
+                      const pain = PAINS.find(x => x.key === f.painKey); // ← 定义 pain
                       return (
                         <li
                           key={f.id}
-                          className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-gray-200/70"
+                          className="mb-4 break-inside-avoid rounded-xl bg-white p-3 shadow-sm ring-1 ring-gray-200/70"
                         >
-                          <div className="text-[11px] text-gray-400 mb-1">#{p?.title}</div>
+                          <div className="text-[11px] text-gray-400 mb-1">
+                            #{pain?.title}
+                          </div>
                           <div className="text-gray-800 leading-relaxed text-[15px]">
-                            {/* 关键字高亮渲染 */}
                             {renderHighlighted(f.text)}
                           </div>
                         </li>
                       );
                     })}
                   </ul>
+
+
                 )}
               </div>
             </div>
