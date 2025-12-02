@@ -211,6 +211,96 @@ export default function Home() {
     return <>{nodes}</>;
   };
 
+  /** 可选：常见痛点入口配置（与 PAINS 顺序/keys 对应） */
+  const ENTRY_SUGGESTIONS = [
+    { label: "节奏被打断", key: "rhythm" },
+    { label: "方法很碎片", key: "fragments" },
+    { label: "没有反馈回路", key: "nofeedback" },
+    { label: "信息过载",   key: "overload" },
+  ] as const;
+
+  /** 简单关键词 → painKey 映射（用户自由输入时做轻量匹配） */
+  const ENTRY_KEYWORDS: Record<string, string[]> = {
+    rhythm:     ["节奏", "打断", "断档", "坚持不了", "中断"],
+    fragments:  ["碎片", "方法太多", "技巧", "体系", "东一西一"],
+    nofeedback: ["反馈", "成就感", "没变化", "复盘没用", "轨迹"],
+    overload:   ["过载", "信息太多", "焦虑", "噪音", "刷不完"],
+    direction:  ["方向", "优先级", "目标", "摇摆", "不确定"],
+    shortterm:  ["速成", "捷径", "坚持", "短期", "快", "立竿见影"],
+  };
+
+  /** 在你的组件 Home() 里，Hero 标题下面插入以下 <section>（位置很关键） */
+  function EntryHero({
+    onStart, // (idx: number) => void  —— 传入 enterSplit
+  }: { onStart: (idx: number) => void }) {
+    const [value, setValue] = useState("");
+
+    // 轻量匹配：根据输入归类到某个 painKey；匹配不到就默认 fragments
+    const resolvePainIndex = (text: string) => {
+      const t = text.trim().toLowerCase();
+      if (!t) return 0; // 默认第一个
+      for (const [key, words] of Object.entries(ENTRY_KEYWORDS)) {
+        if (words.some(w => t.includes(w.toLowerCase()))) {
+          const idx = PAINS.findIndex(p => p.key === key);
+          if (idx >= 0) return idx;
+        }
+      }
+      // 匹配不到：选一个最通用的“方法很碎片”
+      return PAINS.findIndex(p => p.key === "fragments") || 0;
+    };
+
+    const startFromInput = () => {
+      const idx = resolvePainIndex(value);
+      onStart(idx);
+    };
+
+    const startFromKey = (key: string) => {
+      const idx = PAINS.findIndex(p => p.key === key);
+      if (idx >= 0) onStart(idx);
+    };
+
+    return (
+      <section className="px-6 mt-6 mb-10">
+        <div className="max-w-3xl mx-auto">
+          {/* 输入框 + 开始按钮（不影响下方内容布局） */}
+          <div className="relative w-full">
+            <input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && startFromInput()}
+              placeholder="询问任何问题"
+              className="w-full rounded-2xl border border-gray-300 bg-white/90 px-5 py-4 pr-28 text-gray-700
+                        placeholder-gray-400 shadow-sm
+                        focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
+            />
+            <button
+              onClick={startFromInput}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500
+                        px-4 py-2 text-white text-sm font-medium shadow hover:opacity-90 active:scale-[0.98] transition"
+            >
+              立即诊断
+            </button>
+          </div>
+
+          {/* 常见痛点推荐气泡（点击即进入），不占太多高 */}
+          <div className="mt-3 flex flex-wrap gap-2 text-sm">
+            {ENTRY_SUGGESTIONS.map(s => (
+              <button
+                key={s.key}
+                onClick={() => startFromKey(s.key)}
+                className="rounded-full px-3 py-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200
+                          ring-1 ring-gray-200 shadow-sm transition"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+  
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-green-50">
       {/* Hero */}
@@ -218,6 +308,9 @@ export default function Home() {
         <h1 className="text-4xl md:text-6xl font-bold text-gray-800">🌱 让成长自然发生</h1>
         <p className="mt-3 text-gray-600 text-lg md:text-xl">以结构为根，让每一步成长都顺势而为。</p>
       </section>
+
+      {/* 新增：入口体验区 —— 只在首页可见，点击/回车才触发分屏 */}
+      <EntryHero onStart={(idx) => enterSplit(idx)} />
 
       {mode === "grid" ? (
         /* 初始：平铺（悬浮进入分屏并立即展示 3 条） */
