@@ -216,8 +216,7 @@ export default function WiseGrowMvpPage() {
         <main className="wg-chat-panel">
           <header className="wg-chat-header">
             <div className="wg-chat-header-title">
-              <span>WiseGrow Chat · Demo</span>
-              <span>状态 → 承接 / 机制 → 一步动作 → 反馈</span>
+              <span>Chat</span>
             </div>
             <div className="wg-badge">MVP · 行为改变飞轮</div>
           </header>
@@ -258,54 +257,54 @@ export default function WiseGrowMvpPage() {
           </div>
 
           <footer className="wg-chat-input">
-            <div className="wg-quick-actions">
-              <button
-                className="wg-quick-btn"
-                onClick={() =>
-                  handleQuickClick("我准备好了，来一轮轻一点的成长循环。")
-                }
-              >
-                我准备好了
-              </button>
-              <button
-                className="wg-quick-btn"
-                onClick={() => handleQuickClick("有点累，帮我走节奏修复模式。")}
-              >
-                有点累
-              </button>
-              <button
-                className="wg-quick-btn"
-                onClick={() => handleQuickClick("今天心情比较糟，先接住我。")}
-              >
-                心情糟糕
-              </button>
-              <button className="wg-quick-btn" onClick={() => handleQuickClick("好了")}>
-                好了
-              </button>
-            </div>
 
-            <div className="wg-input-row">
-              <input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleUserSubmit(inputValue);
-                    setInputValue("");
-                  }
-                }}
-                placeholder="跟 WiseGrow 说点什么吧，例如：最近总是想逃避社交…"
-              />
-              <button
-                onClick={() => {
+          <div className="wg-input-row">
+            {/* 左侧 + 号按钮（暂时不做动作） */}
+            <button
+              type="button"
+              className="wg-input-icon-btn wg-input-plus"
+              aria-label="Add"
+            >
+              +
+            </button>
+
+            {/* 中间输入框 */}
+            <input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
                   handleUserSubmit(inputValue);
                   setInputValue("");
-                }}
-              >
-                发送
-              </button>
-            </div>
+                }
+              }}
+              placeholder="询问任何问题"
+            />
+
+            {/* 麦克风图标（先占位） */}
+            <button
+              type="button"
+              className="wg-input-icon-btn wg-input-mic"
+              aria-label="Voice input"
+            >
+              🎤
+            </button>
+
+            {/* 发送按钮：黑色圆形 + 箭头 */}
+            <button
+              type="button"
+              className="wg-input-send"
+              aria-label="Send"
+              onClick={() => {
+                handleUserSubmit(inputValue);
+                setInputValue("");
+              }}
+            >
+              ↑
+            </button>
+          </div>
+
           </footer>
         </main>
 
@@ -481,492 +480,547 @@ export default function WiseGrowMvpPage() {
 
       {/* 样式：模仿 ChatGPT，右侧结构面板铺满并可滚动 */}
       <style jsx global>{`
-        html,
-        body {
-          height: 100%;
-        }
-
-        body {
-          margin: 0;
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-            "Segoe UI", sans-serif;
-          background: #020617;
-          color: #e5e7eb;
-        }
-
-        .wg-app {
-          display: flex;
-          height: 100vh;
-          max-width: 1200px;
-          margin: 0 auto;
-          background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
-          border-left: 1px solid #1f2937;
-          border-right: 1px solid #1f2937;
-        }
-
-        /* 聊天主区域（左侧） */
-        .wg-chat-panel {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          background: radial-gradient(circle at top left, #0b1120 0, #020617 55%);
-        }
-
-        .wg-chat-header {
-          padding: 10px 16px;
-          border-bottom: 1px solid #1f2937;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-        }
-
-        .wg-chat-header-title {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-
-        .wg-chat-header-title span:nth-child(1) {
-          font-size: 14px;
-          font-weight: 600;
-        }
-
-        .wg-chat-header-title span:nth-child(2) {
-          font-size: 11px;
-          color: #9ca3af;
-        }
-
-        .wg-badge {
-          font-size: 11px;
-          padding: 3px 7px;
-          border-radius: 999px;
-          border: 1px solid rgba(55, 65, 81, 0.8);
-          color: #9ca3af;
-        }
-
-        .wg-chat-messages {
-          flex: 1;
-          padding: 14px 16px 16px;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .wg-message-row {
-          display: flex;
-          gap: 8px;
-          max-width: 720px;
-        }
-
-        .wg-message-row.wg-user {
-          margin-left: auto;
-          flex-direction: row-reverse;
-        }
-
-        .wg-avatar {
-          width: 26px;
-          height: 26px;
-          border-radius: 999px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          flex-shrink: 0;
-        }
-
-        .wg-avatar-assistant {
-          background: radial-gradient(circle at 30% 20%, #38bdf8, #0369a1 60%, #020617 100%);
-          color: #e0f2fe;
-          box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
-        }
-
-        .wg-avatar-user {
-          background: radial-gradient(circle at 30% 20%, #f97316, #be123c 70%);
-          color: #fef3c7;
-          box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.45);
-        }
-
-        .wg-message-bubble {
-          padding: 9px 11px;
-          border-radius: 12px;
-          font-size: 13px;
-          line-height: 1.5;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          background: rgba(15, 23, 42, 0.98);
-          border: 1px solid rgba(55, 65, 81, 0.9);
-          box-shadow: 0 4px 8px rgba(15, 23, 42, 0.9);
-        }
-
-        .wg-message-row.wg-user .wg-message-bubble {
-          border-color: rgba(59, 130, 246, 0.9);
-          box-shadow: 0 4px 10px rgba(30, 64, 175, 0.7);
-        }
-
-        .wg-message-meta {
-          margin-bottom: 4px;
-          font-size: 11px;
-          color: #9ca3af;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .wg-message-type-pill {
-          padding: 2px 6px;
-          border-radius: 999px;
-          border: 1px solid rgba(55, 65, 81, 0.8);
-          font-size: 10px;
-          color: #9ca3af;
-        }
-
-        .wg-type-system {
-          border-color: rgba(56, 189, 248, 0.8);
-          color: #38bdf8;
-        }
-
-        .wg-type-action {
-          border-color: rgba(34, 197, 94, 0.8);
-          color: #4ade80;
-        }
-
-        .wg-type-mechanism {
-          border-color: rgba(129, 140, 248, 0.9);
-          color: #a5b4fc;
-        }
-
-        .wg-type-identity {
-          border-color: rgba(249, 115, 22, 0.8);
-          color: #fdba74;
-        }
-
-        .wg-type-summary {
-          border-color: rgba(148, 163, 184, 0.9);
-          color: #e5e7eb;
-        }
-
-        .wg-chat-input {
-          border-top: 1px solid #1f2937;
-          padding: 8px 14px 10px;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          background: linear-gradient(to top, #020617, rgba(15, 23, 42, 0.92));
-        }
-
-        .wg-quick-actions {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-
-        .wg-quick-btn {
-          font-size: 11px;
-          padding: 4px 8px;
-          border-radius: 999px;
-          border: 1px solid rgba(55, 65, 81, 0.9);
-          background: rgba(15, 23, 42, 0.9);
-          color: #e5e7eb;
-          cursor: pointer;
-        }
-
-        .wg-quick-btn:hover {
-          border-color: rgba(56, 189, 248, 0.9);
-        }
-
-        .wg-input-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-top: 2px;
-        }
-
-        .wg-input-row input {
-          flex: 1;
-          padding: 8px 10px;
-          border-radius: 999px;
-          border: 1px solid rgba(55, 65, 81, 0.9);
-          background: rgba(15, 23, 42, 0.96);
-          color: #e5e7eb;
-          font-size: 13px;
-          outline: none;
-        }
-
-        .wg-input-row input::placeholder {
-          color: #6b7280;
-        }
-
-        .wg-input-row button {
-          padding: 7px 14px;
-          border-radius: 999px;
-          border: none;
-          font-size: 13px;
-          cursor: pointer;
-          background: linear-gradient(to right, #22c55e, #16a34a);
-          color: #ecfdf5;
-          font-weight: 500;
-          box-shadow: 0 4px 10px rgba(22, 163, 74, 0.45);
-        }
-
-        .wg-input-row button:active {
-          transform: translateY(1px);
-          box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
-        }
-
-        /* 右侧结构面板 */
-        .wg-side-panel {
-          width: 320px;
-          border-left: 1px solid #1f2937;
-          background: rgba(15, 23, 42, 0.96);
-          display: flex;
-          flex-direction: column;
-        }
-
-        .wg-side-scroll {
-          padding: 12px 14px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          overflow-y: auto;
-          height: 100%;
-        }
-
-        .wg-brand {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .wg-brand-logo {
-          width: 26px;
-          height: 26px;
-          border-radius: 999px;
-          background: radial-gradient(circle at 30% 20%, #22c55e, #15803d 60%, #082f49 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 15px;
-          font-weight: 700;
-          color: #ecfdf5;
-          box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-        }
-
-        .wg-brand-text {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-
-        .wg-brand-title {
-          font-size: 14px;
-          font-weight: 600;
-          letter-spacing: 0.02em;
-        }
-
-        .wg-brand-subtitle {
-          font-size: 11px;
-          color: #9ca3af;
-        }
-
-        .wg-panel-section {
-          border-radius: 12px;
-          padding: 10px 10px;
-          background: rgba(15, 23, 42, 0.9);
-          border: 1px solid rgba(55, 65, 81, 0.7);
-        }
-
-        .wg-panel-section h3 {
-          font-size: 12px;
-          font-weight: 600;
-          margin-bottom: 6px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .wg-inline-label {
-          font-size: 11px;
-          color: #9ca3af;
-        }
-
-        .wg-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 4px 8px;
-          border-radius: 999px;
-          font-size: 11px;
-          border: 1px solid rgba(75, 85, 99, 0.9);
-          background: rgba(15, 23, 42, 0.9);
-        }
-
-        .wg-pill-emoji {
-          font-size: 13px;
-        }
-
-        .wg-pill-green {
-          border-color: rgba(34, 197, 94, 0.7);
-          background: rgba(22, 163, 74, 0.18);
-          color: #bbf7d0;
-        }
-
-        .wg-pill-yellow {
-          border-color: rgba(250, 204, 21, 0.8);
-          background: rgba(202, 138, 4, 0.22);
-          color: #fef9c3;
-        }
-
-        .wg-pill-red {
-          border-color: rgba(239, 68, 68, 0.8);
-          background: rgba(153, 27, 27, 0.22);
-          color: #fee2e2;
-        }
-
-        .wg-state-line {
-          margin-top: 5px;
-          font-size: 11px;
-          color: #9ca3af;
-          line-height: 1.5;
-        }
-
-        .wg-progress-steps {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-top: 4px;
-        }
-
-        .wg-step-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 4px 7px;
-          border-radius: 999px;
-          font-size: 10px;
-          border: 1px solid rgba(75, 85, 99, 0.7);
-          background: rgba(15, 23, 42, 0.9);
-          color: #9ca3af;
-          opacity: 0.7;
-        }
-
-        .wg-step-active {
-          border-color: rgba(56, 189, 248, 0.9);
-          background: rgba(8, 47, 73, 0.95);
-          color: #e0f2fe;
-          opacity: 1;
-        }
-
-        .wg-step-done {
-          border-color: rgba(34, 197, 94, 0.6);
-          background: rgba(5, 46, 22, 0.9);
-          color: #bbf7d0;
-          opacity: 1;
-        }
-
-        .wg-growth-stats {
-          font-size: 11px;
-          color: #d1d5db;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-        }
-
-        .wg-growth-stats strong {
-          color: #e5e7eb;
-          font-weight: 600;
-        }
-
-        .wg-link-inline {
-          margin-top: 4px;
-          font-size: 11px;
-          color: #38bdf8;
-          cursor: pointer;
-        }
-
-        .wg-link-inline:hover {
-          text-decoration: underline;
-        }
-
-        .wg-card-list {
-          font-size: 11px;
-          color: #d1d5db;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-        }
-
-        .wg-card-item {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .wg-card-dot {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: #38bdf8;
-        }
-
-        .wg-card-count {
-          margin-top: 4px;
-          font-size: 11px;
-          color: #9ca3af;
-        }
-
-        .wg-mainline-buttons {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-top: 4px;
-        }
-
-        .wg-mainline-btn {
-          font-size: 11px;
-          padding: 4px 8px;
-          border-radius: 999px;
-          border: 1px solid rgba(75, 85, 99, 0.9);
-          background: rgba(15, 23, 42, 0.9);
-          color: #e5e7eb;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-        }
-
-        .wg-mainline-emoji {
-          font-size: 13px;
-        }
-
-        .wg-mainline-active {
-          border-color: rgba(56, 189, 248, 0.9);
-          background: rgba(15, 23, 42, 1);
-          box-shadow: 0 0 0 1px rgba(8, 47, 73, 0.9);
-        }
-
-        /* 滚动条 */
-        ::-webkit-scrollbar {
-          width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #020617;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: #1f2937;
-          border-radius: 999px;
-        }
-
-        @media (max-width: 900px) {
-          .wg-app {
-            max-width: 100%;
-          }
-          .wg-side-panel {
-            display: none; /* 小屏只看聊天区 */
-          }
-        }
-      `}</style>
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+      "Segoe UI", sans-serif;
+    background: #f5f5f7; /* Apple 式窗口背景 */
+    color: #111827;
+  }
+
+  .wg-app {
+    display: flex;
+    height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: radial-gradient(circle at top, #ffffff 0, #f5f5f7 55%);
+    border-left: 1px solid #d2d2d7;
+    border-right: 1px solid #d2d2d7;
+  }
+
+  /* 聊天主区域（左侧） */
+  .wg-chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at top left, #ffffff 0, #f5f5f7 55%);
+  }
+
+  .wg-chat-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid #d2d2d7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: #f5f5f7;
+  }
+
+  .wg-chat-header-title {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .wg-chat-header-title span:nth-child(1) {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .wg-chat-header-title span:nth-child(2) {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .wg-badge {
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(209, 213, 219, 0.8);
+    color: #6b7280;
+    background: #f9fafb;
+  }
+
+  .wg-chat-messages {
+    flex: 1;
+    padding: 14px 16px 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .wg-message-row {
+    display: flex;
+    gap: 8px;
+    max-width: 720px;
+  }
+
+  .wg-message-row.wg-user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+
+  .wg-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .wg-avatar-assistant {
+    background: radial-gradient(
+      circle at 30% 20%,
+      #d7f1ff,
+      #7fb8ff 60%,
+      #eef3ff 100%
+    );
+    color: #0369a1;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+  }
+
+  .wg-avatar-user {
+    background: radial-gradient(
+      circle at 30% 20%,
+      #ffe3c4,
+      #f97316 70%
+    );
+    color: #7c2d12;
+    box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.35);
+  }
+
+  .wg-message-bubble {
+    padding: 9px 11px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #f2f2f7; /* Apple 气泡灰 */
+    border: 1px solid #d2d2d7;
+    box-shadow: 0 4px 8px rgba(15, 23, 42, 0.08);
+    color: #111827;
+  }
+
+  .wg-message-row.wg-user .wg-message-bubble {
+    border-color: #93c5fd;
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.18);
+    background: #e0ebff;
+  }
+
+  .wg-message-meta {
+    margin-bottom: 4px;
+    font-size: 11px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wg-message-type-pill {
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(209, 213, 219, 0.9);
+    font-size: 10px;
+    color: #6b7280;
+    background: #ffffff;
+  }
+
+  .wg-type-system {
+    border-color: rgba(56, 189, 248, 0.8);
+    color: #0284c7;
+  }
+
+  .wg-type-action {
+    border-color: rgba(34, 197, 94, 0.8);
+    color: #16a34a;
+  }
+
+  .wg-type-mechanism {
+    border-color: rgba(129, 140, 248, 0.9);
+    color: #4f46e5;
+  }
+
+  .wg-type-identity {
+    border-color: rgba(249, 115, 22, 0.8);
+    color: #ea580c;
+  }
+
+  .wg-type-summary {
+    border-color: rgba(148, 163, 184, 0.9);
+    color: #4b5563;
+  }
+
+  .wg-chat-input {
+    border-top: 1px solid #d2d2d7;
+    padding: 8px 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: linear-gradient(to top, #f5f5f7, #ffffff);
+  }
+
+  .wg-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .wg-quick-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(209, 213, 219, 0.9);
+    background: #f2f2f7;
+    color: #374151;
+    cursor: pointer;
+  }
+
+  .wg-quick-btn:hover {
+    border-color: rgba(56, 189, 248, 0.9);
+  }
+
+  /* 整条输入条：模仿 ChatGPT 的白色 pill */
+.wg-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
+/* 中间输入框：透明、无边框，占满中间 */
+.wg-input-row input {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 13px;
+  outline: none;
+}
+
+.wg-input-row input::placeholder {
+  color: #9ca3af;
+}
+
+/* 左侧 + 号 & 中间麦克风：小图标按钮 */
+.wg-input-icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 6px;
+  font-size: 14px;
+  color: #111827;
+  opacity: 0.6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wg-input-icon-btn:hover {
+  opacity: 1;
+}
+
+/* 发送按钮：黑色圆形 + 白色箭头 */
+.wg-input-send {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #111827;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.wg-input-send:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+}
+
+
+  .wg-input-row button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.28);
+  }
+
+  /* 右侧结构面板 */
+  .wg-side-panel {
+    width: 320px;
+    border-left: 1px solid #d2d2d7;
+    background: #f5f5f7;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wg-side-scroll {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .wg-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wg-brand-logo {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: radial-gradient(
+      circle at 30% 20%,
+      #34c759,
+      #30b456 60%,
+      #a5d8ff 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25);
+  }
+
+  .wg-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .wg-brand-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .wg-brand-subtitle {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .wg-panel-section {
+    border-radius: 12px;
+    padding: 10px 10px;
+    background: #ffffff;
+    border: 1px solid rgba(210, 210, 215, 0.9);
+  }
+
+  .wg-panel-section h3 {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wg-inline-label {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .wg-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    border: 1px solid rgba(210, 210, 215, 0.9);
+    background: #f5f5f7;
+  }
+
+  .wg-pill-emoji {
+    font-size: 13px;
+  }
+
+  .wg-pill-green {
+    border-color: rgba(52, 199, 89, 0.7);
+    background: #e9fbeff5;
+    color: #14532d;
+  }
+
+  .wg-pill-yellow {
+    border-color: rgba(250, 204, 21, 0.8);
+    background: #fefce8;
+    color: #854d0e;
+  }
+
+  .wg-pill-red {
+    border-color: rgba(239, 68, 68, 0.8);
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .wg-state-line {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  .wg-progress-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .wg-step-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    border: 1px solid rgba(210, 210, 215, 0.9);
+    background: #f5f5f7;
+    color: #6b7280;
+    opacity: 0.9;
+  }
+
+  .wg-step-active {
+    border-color: rgba(59, 130, 246, 0.9);
+    background: #e0ebff;
+    color: #1d4ed8;
+    opacity: 1;
+  }
+
+  .wg-step-done {
+    border-color: rgba(52, 199, 89, 0.8);
+    background: #e4f9ec;
+    color: #14532d;
+    opacity: 1;
+  }
+
+  .wg-growth-stats {
+    font-size: 11px;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .wg-growth-stats strong {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  .wg-link-inline {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #2563eb;
+    cursor: pointer;
+  }
+
+  .wg-link-inline:hover {
+    text-decoration: underline;
+  }
+
+  .wg-card-list {
+    font-size: 11px;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .wg-card-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wg-card-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #38bdf8;
+  }
+
+  .wg-card-count {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  .wg-mainline-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .wg-mainline-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(210, 210, 215, 0.9);
+    background: #f5f5f7;
+    color: #374151;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wg-mainline-emoji {
+    font-size: 13px;
+  }
+
+  .wg-mainline-active {
+    border-color: rgba(59, 130, 246, 0.9);
+    background: #e0ebff;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  }
+
+  /* 滚动条 */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f5f5f7;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 900px) {
+    .wg-app {
+      max-width: 100%;
+    }
+    .wg-side-panel {
+      display: none; /* 小屏只看聊天区 */
+    }
+  }
+`}</style>
+
     </>
   );
 }
